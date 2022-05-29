@@ -9,6 +9,8 @@ import io.restassured.response.Response;
 import org.junit.Test;
 import org.testng.Assert;
 
+import java.util.Collections;
+
 public class myWorkspaceGet {
 
     //https://reqres.in/
@@ -32,10 +34,10 @@ public class myWorkspaceGet {
 
     String baseUri = "https://api.postman.com";
     String xApiKey = "X-Api-Key";
-    String apiKey = "PMAK-628ab087ec9e1a3630a2d1be-aeab88f4fcae014bcfd702cff3341a8681A";
+    String apiKey = "PMAK-628ab087ec9e1a3630a2d1be-aeab88f4fcae014bcfd702cff3341a8681";
     String path = "/workspaces";
 
-
+    //Request: Validate status code 200
     @Test
     public void validate_get_status_code(){
         given().
@@ -49,6 +51,7 @@ public class myWorkspaceGet {
                 log().all();
     }
 
+    //Request: Validate body
     @Test
     public void validate_get_status_body(){
         given().
@@ -67,6 +70,7 @@ public class myWorkspaceGet {
                 log().all();
     }
 
+    //Request: Validate extract response
     @Test
     public void validate_extract_response(){
         Response response = given().
@@ -82,6 +86,7 @@ public class myWorkspaceGet {
         System.out.println("Extract response: " + response.asString());
     }
 
+    //Request: Validate extract response with patb
     @Test
     public void validate_extract_single_value_response(){
         //Request 01 - Using Extract with Response
@@ -131,8 +136,9 @@ public class myWorkspaceGet {
 
     }
 
+    //Request: Validate assert using assertEquals
     @Test
-    public void validate_hamcrest_assert_on_extracted_response(){
+    public void validate_assertEquals() {
         //Assert using assertEquals
         String response = given().
                 baseUri(baseUri).
@@ -144,9 +150,13 @@ public class myWorkspaceGet {
                 statusCode(200).
                 extract().response().path("workspaces[0].name");
 
-        Assert.assertEquals(response,"My Workspace");
+        Assert.assertEquals(response, "My Workspace");
 
-        //Assert using contains()
+    }
+
+    //Request: Validate assert using contains
+    @Test
+    public void validate_contains() {
         given().
                 baseUri(baseUri).
                 header(xApiKey, apiKey).
@@ -155,10 +165,13 @@ public class myWorkspaceGet {
                 then().
                 assertThat().
                 statusCode(200).
-                body("workspaces.name",contains("My Workspace")).
+                body("workspaces.name", contains("My Workspace")).
                 log().all();
+    }
 
-        //Assert using containsInAnyOrder()
+    //Request: Validate assert using containsInAnyOrder
+    @Test
+    public void validate_containsInAnyOrder() {
         given().
                 baseUri(baseUri).
                 header(xApiKey, apiKey).
@@ -167,10 +180,14 @@ public class myWorkspaceGet {
                 then().
                 assertThat().
                 statusCode(200).
-                body("workspaces.name",containsInAnyOrder("My Workspace")).
+                body("workspaces.name", containsInAnyOrder("My Workspace")).
                 log().all();
 
-        //Assert using is(not(empty())
+    }
+
+    //Request: Validate assert using is(not(empty())
+    @Test
+    public void validate_isNotEmpety() {
         given().
                 baseUri(baseUri).
                 header(xApiKey, apiKey).
@@ -179,10 +196,14 @@ public class myWorkspaceGet {
                 then().
                 assertThat().
                 statusCode(200).
-                body("workspaces.name",is(not(empty()))).
+                body("workspaces.name", is(not(empty()))).
                 log().all();
 
-        //Assert using is(not(emptyArray())
+    }
+
+    //Request: Validate assert using isNotEmpetyArray
+    @Test
+    public void validate_isNotEmpetyArray() {
         given().
                 baseUri(baseUri).
                 header(xApiKey, apiKey).
@@ -191,10 +212,14 @@ public class myWorkspaceGet {
                 then().
                 assertThat().
                 statusCode(200).
-                body("workspaces.name",is(not(emptyArray()))).
+                body("workspaces.name", is(not(emptyArray()))).
                 log().all();
 
-        //Assert using hasSize()
+    }
+
+    //Request: Validate assert using hasSize
+    @Test
+    public void validate_hasSize() {
         given().
                 baseUri(baseUri).
                 header(xApiKey, apiKey).
@@ -203,11 +228,13 @@ public class myWorkspaceGet {
                 then().
                 assertThat().
                 statusCode(200).
-                body("workspaces.name",hasSize(1)).
+                body("workspaces.name", hasSize(1)).
                 log().all();
+    }
 
-
-        //Assert using everyItem(startsWith()
+    //Request: Validate assert using everyItem(startsWith
+    @Test
+    public void validate_everyItemStartsWith() {
         given().
                 baseUri(baseUri).
                 header(xApiKey, apiKey).
@@ -218,5 +245,86 @@ public class myWorkspaceGet {
                 statusCode(200).
                 body("workspaces.name",everyItem(startsWith("My"))).
                 log().all();
+    }
+
+    //Request: Validate assert using hasKey, hasValue, notEqualTo
+    @Test
+    public void validate_hasKey() {
+        given().
+                baseUri(baseUri).
+                header(xApiKey, apiKey).
+                when().
+                get(path).
+                then().
+                assertThat().
+                statusCode(200).
+                body("workspaces[0]",hasKey("id"),
+                        "workspaces[0]",hasValue("My Workspace"),
+                        "workspaces[0]",not(equalTo(Collections.EMPTY_MAP))).
+                log().all();
+    }
+
+
+    //Request: Validate assert using hasValue
+    @Test
+    public void validate_hasValue() {
+        given().
+                baseUri(baseUri).
+                header(xApiKey, apiKey).
+                when().
+                get(path).
+                then().
+                assertThat().
+                statusCode(200).
+                body("workspaces[0]",hasValue("My Workspace")).
+                log().all();
+    }
+
+
+    //Request: Validate assert using notEqualTo
+    @Test
+    public void validate_notEqualToCollectionsEmptyMap() {
+        given().
+                baseUri(baseUri).
+                header(xApiKey, apiKey).
+                when().
+                get(path).
+                then().
+                assertThat().
+                statusCode(200).
+                body("workspaces[0]",not(equalTo(Collections.EMPTY_MAP))).
+                log().all();
+    }
+
+    //Request: Validate assert using allOfStartsWithContainsString
+    @Test
+    public void validate_allOfStartsWithContainsString() {
+        given().
+                baseUri(baseUri).
+                header(xApiKey, apiKey).
+                when().
+                get(path).
+                then().
+                assertThat().
+                statusCode(200).
+                body("workspaces[0].name",allOf(startsWith("My"),containsString("Workspace"))).
+                log().all();
+    }
+
+    //Request: Using logs
+    @Test
+    public void request_response_logging() {
+        given().
+                baseUri(baseUri).
+                header(xApiKey, apiKey).
+                log().all().
+                when().
+                get(path).
+                then().
+                log().all().
+                assertThat().
+                statusCode(200);
+//                body("workspaces[0].name",allOf(startsWith("My"),containsString("Workspace"))).
+//                log().all();
     }
 }
